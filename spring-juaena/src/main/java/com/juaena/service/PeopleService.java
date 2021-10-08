@@ -9,9 +9,9 @@ public class PeopleService {
 //	@Autowired
 //	private UserService userService;
 
-	PeopleService(){
-		System.out.println("peopleService constructor execute !@!");
-	}
+//	PeopleService(){
+//		System.out.println("peopleService constructor execute !@!");
+//	}
 
 	public void peopleMethod(){
 		System.out.println("peopleMethod execute !@!@!");

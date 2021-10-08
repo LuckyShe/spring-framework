@@ -242,12 +242,15 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	protected <T> T doGetBean(
 			String name, @Nullable Class<T> requiredType, @Nullable Object[] args, boolean typeCheckOnly)
 			throws BeansException {
-
+		//1.验证一下bean 名字
 		String beanName = transformedBeanName(name);
 		Object bean;
 
 		// Eagerly check singleton cache for manually registered singletons.
+		// 为手动注册的单例对象检查单例缓存
+		// 循环依赖
 		Object sharedInstance = getSingleton(beanName);
+
 		if (sharedInstance != null && args == null) {
 			if (logger.isTraceEnabled()) {
 				if (isSingletonCurrentlyInCreation(beanName)) {
@@ -264,6 +267,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		else {
 			// Fail if we're already creating this bean instance:
 			// We're assumably within a circular reference.
+			/*
+				检测bean是不是原型对象，bean可能解析存在循环依赖  Spring默认支持单例对象的循环依赖
+			 */
 			if (isPrototypeCurrentlyInCreation(beanName)) {
 				throw new BeanCurrentlyInCreationException(beanName);
 			}
@@ -318,9 +324,21 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				}
 
 				// Create bean instance.
+				//判断是否是单例
 				if (mbd.isSingleton()) {
+					/**
+					 *
+					 *	循环依赖
+					 *
+					 */
 					sharedInstance = getSingleton(beanName, () -> {
 						try {
+							/*
+
+							  完成目标创建
+
+							 */
+							//如果需要代理，则还完成了代理
 							return createBean(beanName, mbd, args);
 						}
 						catch (BeansException ex) {
@@ -1202,6 +1220,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 	/**
 	 * Determine the original bean name, resolving locally defined aliases to canonical names.
+	 * 确定原始bean名称，将本地定义的别名解析为规范名称。
 	 * @param name the user-specified name
 	 * @return the original bean name
 	 */

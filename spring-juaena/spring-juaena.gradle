@@ -13,6 +13,12 @@ dependencies {
     compile(project(":spring-context"))
     compile(project(":spring-core"))
     compile(project(":spring-beans"))
+    compile(project(":spring-aop"))
+    compile(project(":spring-aspects"))
+    compile(project(":spring-jdbc"))
+    compile(project(":spring-tx"))
+    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '5.1.47'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
