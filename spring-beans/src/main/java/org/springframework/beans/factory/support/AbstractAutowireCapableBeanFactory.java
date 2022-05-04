@@ -499,6 +499,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// Prepare method overrides.
 		//准备方法覆盖。
+		/*
+			处理lookup-method 和replace-method 配置
+		 */
 		try {
 			mbdToUse.prepareMethodOverrides();
 		}
@@ -559,7 +562,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @see #instantiateUsingFactoryMethod
 	 * @see #autowireConstructor
 	 */
-	protected Object doCreateBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
+	protected Object  doCreateBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
 			throws BeanCreationException {
 
 		// Instantiate the bean.
@@ -577,7 +580,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		if (instanceWrapper == null) {
 			//实例化对象 第二次调用后置处理器
 			/*
-				new UserService()
+				new UserService() 调用构造
 			 */
 			instanceWrapper = createBeanInstance(beanName, mbd, args);
 		}
@@ -594,6 +597,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		synchronized (mbd.postProcessingLock) {
 			if (!mbd.postProcessed) {
 				try {
+					/*
+						第三次调用后置处理器
+					 */
 					applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
 				}
 				catch (Throwable ex) {
@@ -620,6 +626,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			/*
 				此时bean并没有完成属性填充，是一个简单对象
 				构造一个对象工厂添加到 singletonFactories中  也就是添加到三级缓存中
+
 				第四次调用后置处理器
 			 */
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
@@ -635,6 +642,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			populateBean(beanName, mbd, instanceWrapper);
 			/*
 				4. 初始化init 和 BeanPostProcessor 正常AOP
+				执行后置处理器  aop就是在这里完成了 从一个目标对象，变成一个代理对象
 			 */
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		}
@@ -1838,6 +1846,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		Object wrappedBean = bean;
 		if (mbd == null || !mbd.isSynthetic()) {
 			/*
+				第七次调用后置处理器
+				执行后置处理器before --- @PostConstruct
 				BeanPostProcessor#postProcessBeforeInitialization 初始化前
 			 */
 			wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
@@ -1845,7 +1855,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		try {
 			/*
-				初始化
+				初始化  执行Bean生命周期回调中的init方法   InitializingBean 接口在其中被执行
 			 */
 			invokeInitMethods(beanName, wrappedBean, mbd);
 		}
@@ -1856,6 +1866,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 		if (mbd == null || !mbd.isSynthetic()) {
 			/*
+				第八次调用后置处理器
+				执行后置处理器after ---
 				BeanPostProcessor#postProcessAfterInitialization 初始化后
 			 */
 			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);

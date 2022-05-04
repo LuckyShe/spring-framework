@@ -27,10 +27,11 @@ public class UserService {
 
 	//添加事务
 	@Transactional
-	public void userMethod(){
-
-		jdbcTemplate.execute("insert into test values(1,'sam')");
-		throw new NullPointerException();
+	public void userMethod(String name){
+		String sql = "insert into test values(1,'"+name+"')";
+//		jdbcTemplate.execute(sql);
+		System.out.println("userService的业务方法");
+//		throw new NullPointerException();
 	}
 
 }

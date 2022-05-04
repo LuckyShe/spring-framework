@@ -14,11 +14,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configurable
-//@EnableAspectJAutoProxy   //开启切面的注解
+@EnableAspectJAutoProxy   //开启Aspectj切面的支持 proxyTargetClass = true 表示使用CGlib来创建代理对象，系统默认false 使用jdk动态代理
 @ComponentScan("com.juaena")
 @EnableTransactionManagement  // 开启事务
 public class AppConfig {
-
 //	@Bean
 //	public PeopleService getPeopleService1(){
 //		return new PeopleService();
@@ -38,8 +37,6 @@ public class AppConfig {
 	public JdbcTemplate jdbcTemplate(){
 		return new JdbcTemplate(dataSource());
 	}
-
-
 	@Bean
 	public DataSource dataSource(){
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();

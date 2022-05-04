@@ -39,6 +39,6 @@ public class AService {
 	@Autowired
 	private BService bService;
 
-	@Autowired
-	private CService cService;
+//	@Autowired
+//	private CService cService;
 }
